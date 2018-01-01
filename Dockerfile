@@ -16,6 +16,7 @@ RUN apk update && \
 
 # configuration
 COPY site.conf /etc/nginx/conf.d/
+COPY patch-run.sh /usr/bin
 
 # user sites
 VOLUME /root
@@ -28,10 +29,6 @@ VOLUME /etc/letsencrypt
 EXPOSE 443
 EXPOSE 80
 
-# sFTP server
-EXPOSE 22
-
 STOPSIGNAL SIGTERM
 
-CMD ["nginx", "-g", "daemon off;"]
-
+CMD ["patch-run.sh"]
