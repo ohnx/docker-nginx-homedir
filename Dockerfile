@@ -6,10 +6,12 @@ MAINTAINER ohnx <me@masonx.ca>
 
 # commands to run:
 #   update package repo
+#   install sed
 #   install nginx
 #   make /run/nginx so that the pid can be placed there
 #   make /etc/letsencrypt (will be populated with certs for ssl)
 RUN apk update && \
+    apk add sed && \
     apk add nginx && \
     mkdir /run/nginx && \
     mkdir /etc/letsencrypt
