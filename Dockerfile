@@ -6,15 +6,13 @@ MAINTAINER ohnx <me@masonx.ca>
 
 # commands to run:
 #   update package repo
-#   install sed
-#   install nginx
+#   install nginx, sed
+#   install certbot, dcron (cron), py2-future, py2-certifi, py2-urllib3, py2-chardet -- only needed for SSL
 #   make /run/nginx so that the pid can be placed there
-#   make /etc/letsencrypt (will be populated with certs for ssl)
 RUN apk update && \
-    apk add sed && \
-    apk add nginx && \
-    mkdir /run/nginx && \
-    mkdir /etc/letsencrypt
+    apk add nginx sed && \
+    apk add certbot dcron py2-future py2-certifi py2-urllib3 py2-chardet && \
+    mkdir /run/nginx
 
 # configuration
 COPY site.conf /etc/nginx/conf.d/
@@ -24,12 +22,16 @@ COPY patch-run.sh /usr/bin
 VOLUME /root
 VOLUME /home
 
-# ssl
-VOLUME /etc/letsencrypt
-
 # nginx
-EXPOSE 443
 EXPOSE 80
+
+# ssl configuration -- only needed for SSL
+EXPOSE 443
+# copy dhparams
+RUN mkdir -p /etc/ssl/certs/dhparam
+COPY dhparam.pem /etc/ssl/certs/
+# copy cert renew stuff
+COPY cert-autorenew.sh /etc/periodic/weekly/
 
 STOPSIGNAL SIGTERM
 
